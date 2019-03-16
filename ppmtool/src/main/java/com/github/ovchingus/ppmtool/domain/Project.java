@@ -87,7 +87,7 @@ public class Project {
     }
 
     @PrePersist
-    protected void onCreate( ) {
+    protected void onCreate() {
         this.createdDate = new Date();
     }
 
