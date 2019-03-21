@@ -1,13 +1,11 @@
 package com.github.ovchingus.ppmtool.services;
 
 import com.github.ovchingus.ppmtool.domain.Project;
-import com.github.ovchingus.ppmtool.exceptions.CustomResponseEntityExceptionHandler;
 import com.github.ovchingus.ppmtool.exceptions.ProjectIdException;
 import com.github.ovchingus.ppmtool.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -34,5 +32,9 @@ public class ProjectService {
         Optional<Project> project = projectRepository.findByProjectIdentifier(projectId.toUpperCase());
         project.orElseThrow(() -> new ProjectIdException("Project Id '" + projectId + "' does not exists"));
         return project.get();
+    }
+
+    public Iterable<Project> findAllProjects() {
+        return projectRepository.findAll();
     }
 }
