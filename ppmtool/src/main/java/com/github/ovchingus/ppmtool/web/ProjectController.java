@@ -21,15 +21,18 @@ public class ProjectController {
     private final MapValidationErrorService mapValidationErrorService;
 
     @Autowired
-    public ProjectController(ProjectService projectService, MapValidationErrorService mapValidationErrorService) {
+    public ProjectController(ProjectService projectService,
+                             MapValidationErrorService mapValidationErrorService) {
         this.projectService = projectService;
         this.mapValidationErrorService = mapValidationErrorService;
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result) {
+    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project,
+                                              BindingResult result) {
 
-        Optional<ResponseEntity<?>> errorMap = mapValidationErrorService.MapValidationService(result);
+        Optional<ResponseEntity<?>> errorMap =
+                mapValidationErrorService.MapValidationService(result);
 
         // returns error responce if present, otherwise returns good responce
         // optional is bad choice here
@@ -47,5 +50,12 @@ public class ProjectController {
     @GetMapping("/all")
     public Iterable<Project> getAllProjects() {
         return projectService.findAllProjects();
+    }
+
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<?> deleteProject(@PathVariable final String projectId) {
+        projectService.deleteProjectByIdentifier(projectId);
+        return new ResponseEntity<>("Project with ID: " + projectId
+                + " successfully removed", HttpStatus.OK);
     }
 }
