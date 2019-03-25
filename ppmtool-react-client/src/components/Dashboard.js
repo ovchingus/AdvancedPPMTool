@@ -3,7 +3,7 @@ import ProjectItem from "./Project/ProjectItem";
 import CreateProjectButton from "./Project/CreateProjectButton";
 
 class Dashboard extends Component {
-  render() {
+  render () {
     return (
       <div className="projects">
         <div className="container">

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 class ProjectItem extends Component {
-  render() {
+  render () {
     return (
       <div className="container">
         <div className="card card-body bg-light mb-3">
