@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 @Service
 public class MapValidationErrorService {
 
+    //TODO: Makes return "Project identifier is required" ONLY with empty field.
+
     public Optional<ResponseEntity<?>> MapValidationService(BindingResult result) {
         if (result.hasErrors()) {
             return Optional.of(new ResponseEntity<>(result.getFieldErrors().stream().collect(Collectors.toMap(
