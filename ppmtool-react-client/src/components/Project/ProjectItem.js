@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 class ProjectItem extends Component {
-  render () {
-    const {project} = this.props;
+  render() {
+    const { project } = this.props;
     return (
       <div className="container">
         <div className="card card-body bg-light mb-3">

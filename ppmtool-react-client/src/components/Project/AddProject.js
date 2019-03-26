@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types"
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { createProject } from "../../actions/projectActions";
-import classnames from "classnames"
+import classnames from "classnames";
 
 class AddProject extends Component {
-  constructor () {
+  constructor() {
     super();
 
     this.state = {
@@ -22,17 +22,17 @@ class AddProject extends Component {
   }
 
   //lifecycle hook
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
-      this.setState({errors: nextProps.errors})
+      this.setState({ errors: nextProps.errors });
     }
   }
 
-  onChange (e) {
-    this.setState({[e.target.name]: e.target.value});
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
   }
 
-  onSubmit (e) {
+  onSubmit(e) {
     e.preventDefault();
     const newProject = {
       projectName: this.state.projectName,
@@ -42,12 +42,12 @@ class AddProject extends Component {
       endDate: this.state.endDate
     };
 
-    this.props.createProject(newProject, this.props.history)
+    this.props.createProject(newProject, this.props.history);
     //console.log(newProject);
   }
 
-  render () {
-    const {errors} = this.state
+  render() {
+    const { errors } = this.state;
     return (
       <div>
         <div className="project">
@@ -69,7 +69,9 @@ class AddProject extends Component {
                       onChange={this.onChange}
                     />
                     {errors.projectName && (
-                      <div className="invalid-feedback">{errors.projectName}</div>
+                      <div className="invalid-feedback">
+                        {errors.projectName}
+                      </div>
                     )}
                   </div>
                   <div className="form-group">
@@ -85,7 +87,9 @@ class AddProject extends Component {
                     />
 
                     {errors.projectIdentifier && (
-                      <div className="invalid-feedback">{errors.projectIdentifier}</div>
+                      <div className="invalid-feedback">
+                        {errors.projectIdentifier}
+                      </div>
                     )}
                   </div>
 
@@ -100,8 +104,9 @@ class AddProject extends Component {
                       onChange={this.onChange}
                     />
                     {errors.description && (
-                      <div className="invalid-feedback">{errors.description}</div>
-
+                      <div className="invalid-feedback">
+                        {errors.description}
+                      </div>
                     )}
                   </div>
                   <h6>Start Date</h6>
@@ -146,9 +151,9 @@ AddProject.propTypes = {
 
 const mapStateToProps = state => ({
   errors: state.errors
-})
+});
 
 export default connect(
   mapStateToProps,
-  {createProject}
+  { createProject }
 )(AddProject);
