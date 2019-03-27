@@ -32,8 +32,9 @@ public class Project {
     private Date updatedDate;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
-    //
     private Backlog backlog;
+
+
 
     public Project() {
     }
