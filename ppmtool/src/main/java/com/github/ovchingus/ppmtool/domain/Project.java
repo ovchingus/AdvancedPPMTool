@@ -31,6 +31,10 @@ public class Project {
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date updatedDate;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+    //
+    private Backlog backlog;
+
     public Project() {
     }
 
@@ -96,6 +100,14 @@ public class Project {
 
     public void setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    public Backlog getBacklog() {
+        return backlog;
+    }
+
+    public void setBacklog(Backlog backlog) {
+        this.backlog = backlog;
     }
 
     @PrePersist
