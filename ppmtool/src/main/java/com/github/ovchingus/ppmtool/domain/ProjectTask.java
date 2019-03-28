@@ -115,6 +115,14 @@ public class ProjectTask {
         this.updateAt = updateAt;
     }
 
+    public Backlog getBacklog() {
+        return backlog;
+    }
+
+    public void setBacklog(Backlog backlog) {
+        this.backlog = backlog;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createAt = new Date();
