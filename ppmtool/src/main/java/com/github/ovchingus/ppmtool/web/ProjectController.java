@@ -28,18 +28,22 @@ public class ProjectController {
         this.mapValidationErrorService = mapValidationErrorService;
     }
 
+
+    /**
+     * Checks errors in project creation form and if there is no errors create or update
+     * existing project.
+     * @param project - Project object created with data obtained by POST method.
+     * @param result -
+     * @return -
+     */
     @PostMapping("")
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project,
                                               BindingResult result) {
 
-        Optional<ResponseEntity<?>> errorMap =
-                mapValidationErrorService.MapValidationService(result);
-
-        // returns error responce if present, otherwise returns good responce
-        // optional is bad choice here
-        if (errorMap.isPresent()) return errorMap.get();
-        projectService.saveOrUpdate(project);
-        return new ResponseEntity<>(project, HttpStatus.CREATED);
+        return mapValidationErrorService.MapValidationService(result).orElseGet(() -> {
+            projectService.saveOrUpdate(project);
+            return new ResponseEntity<>(project, HttpStatus.CREATED);
+        });
     }
 
     @GetMapping("/{projectId}")
