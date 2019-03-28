@@ -28,20 +28,22 @@ public class ProjectTaskService {
         Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
         //set the bl to pt
         projectTask.setBacklog(backlog);
+
         // we want our project sequence to be like this: IDPRO-1 IDPRO-2 ...100 101
-        Integer BacklogSequence = backlog.getPTSequence();
+        Integer backlogSequence = backlog.getPTSequence();
         // Update the BL SEQUENCE
-        BacklogSequence++;
+        backlogSequence++;
+        backlog.setPTSequence(backlogSequence);
 
         //Add sequence to Project Task
-        projectTask.setProjectSequence(projectIdentifier + "-" + BacklogSequence);
+        projectTask.setProjectSequence(projectIdentifier + "-" + backlogSequence);
         projectTask.setProjectIdentifier(projectIdentifier);
-/*
+
         // INITIAL priority when priority null
-        if (projectTask.getPriority() == 0 || projectTask.getPriority() == null) {
+        if (projectTask.getPriority() == null) {
             projectTask.setPriority(3);
         }
-*/
+
         //INITIAL status when status is null
         if (projectTask.getStatus().equals("") || projectTask.getStatus() == null) {
             projectTask.setStatus("TO_DO");
