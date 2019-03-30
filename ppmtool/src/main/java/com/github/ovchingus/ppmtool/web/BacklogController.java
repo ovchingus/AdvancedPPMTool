@@ -1,5 +1,6 @@
 package com.github.ovchingus.ppmtool.web;
 
+import com.github.ovchingus.ppmtool.domain.Project;
 import com.github.ovchingus.ppmtool.domain.ProjectTask;
 import com.github.ovchingus.ppmtool.services.MapValidationErrorService;
 import com.github.ovchingus.ppmtool.services.ProjectTaskService;
@@ -41,5 +42,11 @@ public class BacklogController {
     @GetMapping("/{backlog_id}")
     public Iterable<ProjectTask> getProjectBacklog(@PathVariable String backlog_id) {
         return projectTaskService.findBacklogById(backlog_id);
+    }
+
+    @GetMapping("/{backlog_id}/{pt_id}")
+    public ResponseEntity<?> getProjectTask(@PathVariable String backlog_id, @PathVariable String pt_id) {
+        ProjectTask projectTask = projectTaskService.findPTByProjectSequence(backlog_id, pt_id);
+        return new ResponseEntity<>(projectTask, HttpStatus.OK);
     }
 }
