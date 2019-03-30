@@ -1,7 +1,6 @@
 package com.github.ovchingus.ppmtool.services;
 
 import com.github.ovchingus.ppmtool.domain.Backlog;
-import com.github.ovchingus.ppmtool.domain.Project;
 import com.github.ovchingus.ppmtool.domain.ProjectTask;
 import com.github.ovchingus.ppmtool.exceptions.ProjectNotFoundException;
 import com.github.ovchingus.ppmtool.repositories.BacklogRepository;
@@ -9,6 +8,8 @@ import com.github.ovchingus.ppmtool.repositories.ProjectRepository;
 import com.github.ovchingus.ppmtool.repositories.ProjectTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class ProjectTaskService {
@@ -88,4 +89,13 @@ public class ProjectTaskService {
 
         return projectTask;
     }
+
+    public ProjectTask updateByProjectSequence(ProjectTask updatedTask, String backlog_id, String pt_id){
+        ProjectTask projectTask = projectTaskRepository.findByProjectSequence(pt_id).get();
+
+        projectTask = updatedTask;
+
+        return projectTaskRepository.save(projectTask);
+
+    };
 }

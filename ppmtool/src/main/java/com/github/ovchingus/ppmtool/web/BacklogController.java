@@ -24,7 +24,8 @@ public class BacklogController {
     private final MapValidationErrorService mapValidationErrorService;
 
     @Autowired
-    public BacklogController(ProjectTaskService projectTaskService, MapValidationErrorService mapValidationErrorService) {
+    public BacklogController(ProjectTaskService projectTaskService,
+                             MapValidationErrorService mapValidationErrorService) {
         this.projectTaskService = projectTaskService;
         this.mapValidationErrorService = mapValidationErrorService;
     }
@@ -48,5 +49,15 @@ public class BacklogController {
     public ResponseEntity<?> getProjectTask(@PathVariable String backlog_id, @PathVariable String pt_id) {
         ProjectTask projectTask = projectTaskService.findPTByProjectSequence(backlog_id, pt_id);
         return new ResponseEntity<>(projectTask, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{backlog_id}/{pt_id}")
+    public ResponseEntity<?> updateProjectTask(@Valid @RequestBody ProjectTask projectTask, BindingResult result,
+                                               @PathVariable String backlog_id, @PathVariable String pt_id) {
+
+        return mapValidationErrorService.MapValidationService(result).orElseGet(() -> {
+            ProjectTask updatedTask = projectTaskService.updateByProjectSequence(projectTask, backlog_id, pt_id);
+            return new ResponseEntity<>(updatedTask, HttpStatus.OK);
+        });
     }
 }
