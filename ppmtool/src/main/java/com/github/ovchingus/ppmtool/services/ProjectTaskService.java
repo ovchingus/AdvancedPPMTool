@@ -20,7 +20,9 @@ public class ProjectTaskService {
     private final ProjectRepository projectRepository;
 
     @Autowired
-    public ProjectTaskService(BacklogRepository backlogRepository, ProjectTaskRepository projectTaskRepository, ProjectRepository projectRepository) {
+    public ProjectTaskService(BacklogRepository backlogRepository,
+                              ProjectTaskRepository projectTaskRepository,
+                              ProjectRepository projectRepository) {
         this.backlogRepository = backlogRepository;
         this.projectTaskRepository = projectTaskRepository;
         this.projectRepository = projectRepository;
@@ -72,8 +74,18 @@ public class ProjectTaskService {
 
     public ProjectTask findPTByProjectSequence(String backlog_id, String pt_id) {
         //make sure to search on the right backlog
+        projectRepository.findByProjectIdentifier(backlog_id).orElseThrow(() ->
+                new ProjectNotFoundException("Project with ID: '" + backlog_id + "' does not exist"));
 
-        return projectTaskRepository.findByProjectSequence(pt_id);
+        //make sure that task exist
+        ProjectTask projectTask = projectTaskRepository.findByProjectSequence(pt_id).orElseThrow(() ->
+                new ProjectNotFoundException("Project Task '" + pt_id + "' not found"));
 
+        //make sure that backlog/project id in the path corresponds to the right project
+        if (!projectTask.getProjectIdentifier().equals(backlog_id))
+            throw new ProjectNotFoundException("Project Task '" + pt_id +
+                    "' does not exist in project: '" + backlog_id + "'");
+
+        return projectTask;
     }
 }
