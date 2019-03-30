@@ -1,13 +1,14 @@
 package com.github.ovchingus.ppmtool.services;
 
 import com.github.ovchingus.ppmtool.domain.Backlog;
+import com.github.ovchingus.ppmtool.domain.Project;
 import com.github.ovchingus.ppmtool.domain.ProjectTask;
+import com.github.ovchingus.ppmtool.exceptions.ProjectNotFoundException;
 import com.github.ovchingus.ppmtool.repositories.BacklogRepository;
+import com.github.ovchingus.ppmtool.repositories.ProjectRepository;
 import com.github.ovchingus.ppmtool.repositories.ProjectTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ProjectTaskService {
@@ -16,45 +17,56 @@ public class ProjectTaskService {
 
     private final ProjectTaskRepository projectTaskRepository;
 
+    private final ProjectRepository projectRepository;
+
     @Autowired
-    public ProjectTaskService(BacklogRepository backlogRepository, ProjectTaskRepository projectTaskRepository) {
+    public ProjectTaskService(BacklogRepository backlogRepository, ProjectTaskRepository projectTaskRepository, ProjectRepository projectRepository) {
         this.backlogRepository = backlogRepository;
         this.projectTaskRepository = projectTaskRepository;
+        this.projectRepository = projectRepository;
     }
 
     public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask) {
 
         //Exception: Project not found
+        try {
+            //PTs to be added to a specific project, project != null, BL exist
+            Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
+            //set the bl to pt
+            projectTask.setBacklog(backlog);
 
-        //PTs to be added to a specific project, project != null, BL exist
-        Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
-        //set the bl to pt
-        projectTask.setBacklog(backlog);
+            // we want our project sequence to be like this: IDPRO-1 IDPRO-2 ...100 101
+            Integer backlogSequence = backlog.getPTSequence();
+            // Update the BL SEQUENCE
+            backlogSequence++;
+            backlog.setPTSequence(backlogSequence);
 
-        // we want our project sequence to be like this: IDPRO-1 IDPRO-2 ...100 101
-        Integer backlogSequence = backlog.getPTSequence();
-        // Update the BL SEQUENCE
-        backlogSequence++;
-        backlog.setPTSequence(backlogSequence);
+            //Add sequence to Project Task
+            projectTask.setProjectSequence(projectIdentifier + "-" + backlogSequence);
+            projectTask.setProjectIdentifier(projectIdentifier);
 
-        //Add sequence to Project Task
-        projectTask.setProjectSequence(projectIdentifier + "-" + backlogSequence);
-        projectTask.setProjectIdentifier(projectIdentifier);
+            // INITIAL priority when priority null
+            if (projectTask.getPriority() == null) {
+                projectTask.setPriority(3);
+            }
 
-        // INITIAL priority when priority null
-        if (projectTask.getPriority() == null) {
-            projectTask.setPriority(3);
+            //INITIAL status when status is null
+            if (projectTask.getStatus() == null || projectTask.getStatus().equals("")) {
+                projectTask.setStatus("TO_DO");
+            }
+
+            return projectTaskRepository.save(projectTask);
+        } catch (Exception e) {
+            throw new ProjectNotFoundException("Project not found");
         }
 
-        //INITIAL status when status is null
-        if (projectTask.getStatus() == null || projectTask.getStatus().equals("")) {
-            projectTask.setStatus("TO_DO");
-        }
-
-        return projectTaskRepository.save(projectTask);
     }
 
     public Iterable<ProjectTask> findBacklogById(String id) {
+
+        projectRepository.findByProjectIdentifier(id).orElseThrow(() ->
+                new ProjectNotFoundException("Project with ID: '" + id + "' does not exist"));
+
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(id);
     }
 }
