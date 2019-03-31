@@ -30,6 +30,7 @@ public class UserService {
 
             //TODO: make sure that password and confirmPassword match
             //We don`t persist or show confirmPassword
+            newUser.setConfirmPassword("");
             return userRepository.save(newUser);
         } catch (Exception e) {
             throw new UsernameAlreadyExistsException("Username '" + newUsername + "' already exists");

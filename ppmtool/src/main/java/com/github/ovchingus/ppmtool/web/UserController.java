@@ -3,6 +3,8 @@ package com.github.ovchingus.ppmtool.web;
 import com.github.ovchingus.ppmtool.domain.User;
 import com.github.ovchingus.ppmtool.services.MapValidationErrorService;
 import com.github.ovchingus.ppmtool.services.UserService;
+import com.github.ovchingus.ppmtool.validator.UserValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,15 +23,19 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(MapValidationErrorService mapValidationErrorService, UserService userService) {
+    private final UserValidator userValidator;
+
+    @Autowired
+    public UserController(MapValidationErrorService mapValidationErrorService, UserService userService, UserValidator userValidator) {
         this.mapValidationErrorService = mapValidationErrorService;
         this.userService = userService;
+        this.userValidator = userValidator;
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) {
         //TODO: validate passwords match
-
+        userValidator.validate(user, result);
         return mapValidationErrorService.MapValidationService(result).orElseGet(() -> {
             User newUser = userService.saveUser(user);
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
