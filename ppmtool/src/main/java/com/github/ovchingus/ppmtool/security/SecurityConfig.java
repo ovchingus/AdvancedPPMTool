@@ -26,11 +26,9 @@ import static com.github.ovchingus.ppmtool.security.SecurityConstants.SIGN_UP_UR
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired private JwtAuthEntryPoint jwtAuthEntryPoint;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    @Autowired private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -45,8 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtAuthEntryPoint unauthorizedHandler;
 
-    public SecurityConfig(JwtAuthEntryPoint unauthorizedHandler) {
+    @Autowired
+    public SecurityConfig(JwtAuthEntryPoint unauthorizedHandler, CustomUserDetailsService customUserDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.unauthorizedHandler = unauthorizedHandler;
+        this.customUserDetailsService = customUserDetailsService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
