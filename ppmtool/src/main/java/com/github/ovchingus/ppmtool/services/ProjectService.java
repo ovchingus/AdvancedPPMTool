@@ -2,9 +2,11 @@ package com.github.ovchingus.ppmtool.services;
 
 import com.github.ovchingus.ppmtool.domain.Backlog;
 import com.github.ovchingus.ppmtool.domain.Project;
+import com.github.ovchingus.ppmtool.domain.User;
 import com.github.ovchingus.ppmtool.exceptions.ProjectIdException;
 import com.github.ovchingus.ppmtool.repositories.BacklogRepository;
 import com.github.ovchingus.ppmtool.repositories.ProjectRepository;
+import com.github.ovchingus.ppmtool.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +19,25 @@ public class ProjectService {
 
     private final BacklogRepository backlogRepository;
 
+    private final UserRepository userRepository;
+
     @Autowired
     public ProjectService(ProjectRepository projectRepository,
-                          BacklogRepository backlogRepository) {
+                          BacklogRepository backlogRepository,
+                          UserRepository userRepository) {
         this.projectRepository = projectRepository;
         this.backlogRepository = backlogRepository;
+        this.userRepository = userRepository;
     }
 
-    public Project saveOrUpdate(Project project) {
+    public Project saveOrUpdate(Project project, String username) {
         try {
+
+            // safe beacause of security
+            User user = userRepository.findByUsername(username).get();
+
+            project.setUser(user);
+
             String pId = project.getProjectIdentifier().toUpperCase();
 
             project.setProjectIdentifier(pId);
