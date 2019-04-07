@@ -76,10 +76,9 @@ public class ProjectTaskService {
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(id);
     }
 
-    public ProjectTask findPTByProjectSequence(String backlog_id, String pt_id) {
+    public ProjectTask findPTByProjectSequence(String backlog_id, String pt_id, String username) {
         //make sure to search on the right backlog
-        projectRepository.findByProjectIdentifier(backlog_id).orElseThrow(() ->
-                new ProjectNotFoundException("Project with ID: '" + backlog_id + "' does not exist"));
+        projectService.findByProjectIdentifier(backlog_id, username);
 
         //make sure that task exist
         ProjectTask projectTask = projectTaskRepository.findByProjectSequence(pt_id).orElseThrow(() ->
@@ -94,14 +93,15 @@ public class ProjectTaskService {
     }
 
     @SuppressWarnings("UnusedAssignment")
-    public ProjectTask updateByProjectSequence(ProjectTask updatedTask, String backlog_id, String pt_id) {
-        ProjectTask projectTask = findPTByProjectSequence(backlog_id, pt_id);
+    public ProjectTask updateByProjectSequence(ProjectTask updatedTask, String backlog_id, String pt_id,
+                                               String username) {
+        ProjectTask projectTask = findPTByProjectSequence(backlog_id, pt_id, username);
         projectTask = updatedTask;
         return projectTaskRepository.save(projectTask);
     }
 
-    public void deletePTByProjectSequence(String backlog_id, String pt_id) {
-        ProjectTask projectTask = findPTByProjectSequence(backlog_id, pt_id);
+    public void deletePTByProjectSequence(String backlog_id, String pt_id, String username) {
+        ProjectTask projectTask = findPTByProjectSequence(backlog_id, pt_id, username);
         projectTaskRepository.delete(projectTask);
     }
 }
