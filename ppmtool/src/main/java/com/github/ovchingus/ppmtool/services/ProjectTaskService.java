@@ -18,21 +18,25 @@ public class ProjectTaskService {
 
     private final ProjectRepository projectRepository;
 
+    private ProjectService projectService;
+
     @Autowired
     public ProjectTaskService(BacklogRepository backlogRepository,
                               ProjectTaskRepository projectTaskRepository,
-                              ProjectRepository projectRepository) {
+                              ProjectRepository projectRepository, ProjectService projectService) {
         this.backlogRepository = backlogRepository;
         this.projectTaskRepository = projectTaskRepository;
         this.projectRepository = projectRepository;
+        this.projectService = projectService;
     }
 
-    public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask) {
+    public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask,
+                                      String username) {
 
         //Exception: Project not found
         try {
             //PTs to be added to a specific project, project != null, BL exist
-            Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
+            Backlog backlog = projectService.findByProjectIdentifier(projectIdentifier, username).getBacklog();
             //set the bl to pt
             projectTask.setBacklog(backlog);
 
@@ -47,9 +51,11 @@ public class ProjectTaskService {
             projectTask.setProjectIdentifier(projectIdentifier);
 
             // INITIAL priority when priority null
+            /*
             if (projectTask.getPriority() == null || projectTask.getPriority() == 0) {
                 projectTask.setPriority(3);
-            }
+            }*/
+
 
             //INITIAL status when status is null
             if (projectTask.getStatus() == null || projectTask.getStatus().equals("")) {
@@ -63,10 +69,9 @@ public class ProjectTaskService {
 
     }
 
-    public Iterable<ProjectTask> findBacklogById(String id) {
+    public Iterable<ProjectTask> findBacklogById(String id, String username) {
 
-        projectRepository.findByProjectIdentifier(id).orElseThrow(() ->
-                new ProjectNotFoundException("Project with ID: '" + id + "' does not exist"));
+        projectService.findByProjectIdentifier(id, username);
 
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(id);
     }

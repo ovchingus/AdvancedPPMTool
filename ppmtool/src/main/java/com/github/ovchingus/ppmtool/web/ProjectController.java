@@ -33,9 +33,6 @@ public class ProjectController {
     /**
      * Checks errors in project creation form and if there is no errors create or update
      * existing project.
-     * @param project - Project object created with data obtained by POST method.
-     * @param result -
-     * @return -
      */
     @PostMapping("")
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project,
@@ -48,19 +45,19 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}")
-    public ResponseEntity<?> getProjectById(@PathVariable final String projectId) {
-        Project project = projectService.findByProjectIdentifier(projectId);
+    public ResponseEntity<?> getProjectById(@PathVariable final String projectId, Principal principal) {
+        Project project = projectService.findByProjectIdentifier(projectId, principal.getName());
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 
     @GetMapping("/all")
-    public Iterable<Project> getAllProjects() {
-        return projectService.findAllProjects();
+    public Iterable<Project> getAllProjects(Principal principal) {
+        return projectService.findAllProjects(principal.getName());
     }
 
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<?> deleteProject(@PathVariable final String projectId) {
-        projectService.deleteProjectByIdentifier(projectId);
+    public ResponseEntity<?> deleteProject(@PathVariable final String projectId, Principal principal) {
+        projectService.deleteProjectByIdentifier(projectId, principal.getName());
         return new ResponseEntity<>("Project with ID: " + projectId
                 + " successfully removed", HttpStatus.OK);
     }
