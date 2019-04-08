@@ -153,6 +153,6 @@ const mapStateToProps = state => ({
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   { addProjectTask }
 )(AddProjectTask);
