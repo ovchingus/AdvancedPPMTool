@@ -14,5 +14,5 @@ public interface SecurityConstants {
     String HEADER_STRING = "Authorization";
 
     // 30 secondes in millis
-    long EXPIRATION_TIME = 30_000;
+    long EXPIRATION_TIME = 3_000_000;
 }

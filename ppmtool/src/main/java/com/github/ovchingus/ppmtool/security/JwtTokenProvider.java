@@ -2,11 +2,9 @@ package com.github.ovchingus.ppmtool.security;
 
 import com.github.ovchingus.ppmtool.domain.User;
 import io.jsonwebtoken.*;
-import javassist.util.HotSwapAgent;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.sql.SQLOutput;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +21,7 @@ public class JwtTokenProvider {
         User user = (User) authentication.getPrincipal();
         Date now = new Date(System.currentTimeMillis());
 
-        Date expireDate = new Date(now.getTime() + EXPIRATION_TIME);
+        Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
 
         String userId = Long.toString(user.getId());
 
@@ -32,12 +30,11 @@ public class JwtTokenProvider {
         claims.put("username", user.getUsername());
         claims.put("fullName", user.getFullName());
 
-
         return Jwts.builder()
                 .setSubject(userId)
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(expireDate)
+                .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
     }
@@ -46,10 +43,11 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token);
+            return true;
         } catch (SignatureException ex) {
             System.out.println("Invalid JWT Signature");
         } catch (MalformedJwtException ex) {
-            System.out.println("Invalid JWT token");
+            System.out.println("Invalid JWT Token");
         } catch (ExpiredJwtException ex) {
             System.out.println("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
